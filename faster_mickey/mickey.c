@@ -233,3 +233,40 @@ mickey_decrypt(struct mickey_context *ctx, const uint8_t *buf, const uint32_t bu
 	mickey_encrypt(ctx, buf, buflen, out);
 }
 
+// Test vectors print
+void
+mickey_test_vectors(struct mickey_context *ctx)
+{
+	uint32_t i, j;
+	uint8_t keystream[16];
+
+	for(i = 0; i < 16; i++) {
+		
+		keystream[i] = 0;
+
+		for(j = 0; j < 8; j++) {
+			keystream[i] ^= ((ctx->r[0] ^ ctx->s[0]) & 1) << (7-j);
+			CLOCK_KG(ctx, 0, 0);
+		}
+	}
+	
+	printf("Tests vector for the Mickey:\n");
+	
+	printf("\nKey:       ");
+
+	for(i = 0; i < 10; i++)
+		printf("%02x ", ctx->key[i]);
+	
+	printf("\nIV:        ");
+
+	for(i = 0; i < 10; i++)
+		printf("%02x ", ctx->iv[i]);
+	
+	printf("\nKeystream: ");
+
+	for(i = 0; i < 16; i++)
+		printf("%02x ", keystream[i]);
+	
+	printf("\n\n");
+}
+
