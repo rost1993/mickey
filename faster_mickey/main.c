@@ -57,14 +57,14 @@ main(void)
 		exit(1);
 	}
 
-	if(mickey_set_key_and_iv(ctx, (uint8_t *)key, 10, iv)) {
+	if(mickey_set_key_and_iv(ctx, (uint8_t *)key, 10, iv, 10)) {
 		printf("Mickey context filling error!\n");
 		exit(1);
 	}
 
 	mickey_encrypt(ctx, buf, BUFLEN, out1);
 
-	if(mickey_set_key_and_iv(ctx, (uint8_t *)key, 10, iv)) {
+	if(mickey_set_key_and_iv(ctx, (uint8_t *)key, 10, iv, 10)) {
 		printf("Mickey context filling error!\n");
 		exit(1);
 	}

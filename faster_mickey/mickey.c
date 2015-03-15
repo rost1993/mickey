@@ -42,6 +42,7 @@ uint32_t S_MASK1[4] = { 0x4C8CB877, 0x4911B063,
 /*
  * MICKEY 2.0 context
  * keylen - chiper key length in bytes
+ * ivlen - vector initialization in bytes
  * key - chiper key 
  * iv - initialization vector
  * r - register r
@@ -49,6 +50,7 @@ uint32_t S_MASK1[4] = { 0x4C8CB877, 0x4911B063,
 */
 struct mickey_context {
 	int keylen;
+	int ivlen;
 	uint8_t key[10];
 	uint8_t iv[10];
 	uint32_t r[4];
@@ -60,7 +62,7 @@ struct mickey_context *
 mickey_context_new(void)
 {
 	struct mickey_context *ctx;
-	ctx = malloc(sizeof(*ctx));
+	ctx = (struct mickey_context *)malloc(sizeof(*ctx));
 
 	if(ctx == NULL)
 		return NULL;
@@ -169,7 +171,7 @@ mickey_key_setup(struct mickey_context *ctx)
 	memset(ctx->r, 0, sizeof(ctx->r));
 	memset(ctx->s, 0, sizeof(ctx->s));
 	
-	for(i = 0; i < 80; i++) {
+	for(i = 0; i < (ctx->ivlen * 8); i++) {
 		input_bit = (ctx->iv[i/8] >> (7 - (i & 0x7))) & 1;
 		CLOCK_KG(ctx, 1, input_bit);
 	}
@@ -186,11 +188,16 @@ mickey_key_setup(struct mickey_context *ctx)
 // Fill the mickey_context (key and iv)
 // Return value: 0 (if all is well), -1 (is all bad)
 int
-mickey_set_key_and_iv(struct mickey_context *ctx, const uint8_t *key, const int keylen, const uint8_t iv[10])
+mickey_set_key_and_iv(struct mickey_context *ctx, const uint8_t *key, const int keylen, const uint8_t iv[10], const int ivlen)
 {
-	if(keylen <= MICKEY)
+	if((keylen > 0) && (keylen <= MICKEY))
 		
 		ctx->keylen = keylen;
+	else
+		return -1;
+	
+	if((ivlen > 0) && (ivlen <= 10))
+		ctx->ivlen = ivlen;
 	else
 		return -1;
 	
