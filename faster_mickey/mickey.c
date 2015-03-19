@@ -39,45 +39,13 @@ uint32_t S_MASK0[4] = { 0x9FFA7FAF, 0xAF4A9381,
 // Feedback mask associated with the register S for clock control_bit = 1
 uint32_t S_MASK1[4] = { 0x4C8CB877, 0x4911B063,
 			0x40FBC52B, 0x00000008 };
-/*
- * MICKEY 2.0 context
- * keylen - chiper key length in bytes
- * ivlen - vector initialization in bytes
- * key - chiper key 
- * iv - initialization vector
- * r - register r
- * s - register s
-*/
-struct mickey_context {
-	int keylen;
-	int ivlen;
-	uint8_t key[10];
-	uint8_t iv[10];
-	uint32_t r[4];
-	uint32_t s[4];
-};
 
-// Allocates memory for the mickey_context
-struct mickey_context *
-mickey_context_new(void)
-{
-	struct mickey_context *ctx;
-	ctx = (struct mickey_context *)malloc(sizeof(*ctx));
 
-	if(ctx == NULL)
-		return NULL;
-
-	memset(ctx, 0, sizeof(*ctx));
-
-	return ctx;
-}
-
-// Delete mickey_context
+// Mickey initialization function
 void
-mickey_context_free(struct mickey_context **ctx)
+mickey_init(struct mickey_context *ctx)
 {
-	free(*ctx);
-	*ctx = NULL;
+	memset(ctx, 0, sizeof(*ctx));
 }
 
 // Function clocking the register R

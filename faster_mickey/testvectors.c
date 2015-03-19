@@ -19,35 +19,25 @@ main(void)
 	uint8_t iv2[10] = {0x9C, 0x53, 0x2F, 0x8A, 0xC3,
 			   0xEA, 0x4B, 0x2E, 0xA0, 0xF5 };
 	
-	struct mickey_context *ctx;
+	struct mickey_context ctx;
 
-	if((ctx = mickey_context_new()) == NULL) {
-		printf("Allocates memory error!\n");
-		exit(1);
-	}
+	mickey_init(&ctx);
 
-	if(mickey_set_key_and_iv(ctx, key1, 10, iv1, 10)) {
+	if(mickey_set_key_and_iv(&ctx, key1, 10, iv1, 10)) {
 		printf("Filling error mickey context!\n");
 		exit(1);
 	}
 	
-	mickey_test_vectors(ctx);
+	mickey_test_vectors(&ctx);
 
-	mickey_context_free(&ctx);
+	mickey_init(&ctx);
 
-	if((ctx = mickey_context_new()) == NULL) {
-		printf("Memory allocation error!\n");
-		exit(1);
-	}
-
-	if(mickey_set_key_and_iv(ctx, key2, 10, iv2, 10)) {
+	if(mickey_set_key_and_iv(&ctx, key2, 10, iv2, 10)) {
 		printf("Filling error mickey context!\n");
 		exit(1);
 	}
 
-	mickey_test_vectors(ctx);
-
-	mickey_context_free(&ctx);
+	mickey_test_vectors(&ctx);
 
 	return 0;
 }

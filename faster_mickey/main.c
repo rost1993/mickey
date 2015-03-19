@@ -44,7 +44,7 @@ time_stop(void)
 int
 main(void)
 {
-	struct mickey_context *ctx;
+	struct mickey_context ctx;
 
 	memset(buf, 'q', sizeof(buf));
 	memset(key, 'k', sizeof(key));
@@ -52,26 +52,23 @@ main(void)
 
 	time_start();
 
-	if((ctx = mickey_context_new()) == NULL) {
-		printf("Memory allocation error!\n");
-		exit(1);
-	}
+	mickey_init(&ctx);
 
-	if(mickey_set_key_and_iv(ctx, (uint8_t *)key, 10, iv, 10)) {
+	if(mickey_set_key_and_iv(&ctx, (uint8_t *)key, 10, iv, 10)) {
 		printf("Mickey context filling error!\n");
 		exit(1);
 	}
 
-	mickey_encrypt(ctx, buf, BUFLEN, out1);
+	mickey_encrypt(&ctx, buf, BUFLEN, out1);
 
-	if(mickey_set_key_and_iv(ctx, (uint8_t *)key, 10, iv, 10)) {
+	mickey_init(&ctx);
+
+	if(mickey_set_key_and_iv(&ctx, (uint8_t *)key, 10, iv, 10)) {
 		printf("Mickey context filling error!\n");
 		exit(1);
 	}
 
-	mickey_decrypt(ctx, out1, BUFLEN, out2);
-
-	mickey_context_free(&ctx);
+	mickey_decrypt(&ctx, out1, BUFLEN, out2);
 
 	printf("Run time = %d\n\n", time_stop());
 
