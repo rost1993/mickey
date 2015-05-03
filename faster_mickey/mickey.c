@@ -42,7 +42,7 @@ uint32_t S_MASK1[4] = { 0x4C8CB877, 0x4911B063,
 
 
 // Mickey initialization function
-void
+static void
 mickey_init(struct mickey_context *ctx)
 {
 	memset(ctx, 0, sizeof(*ctx));
@@ -158,6 +158,8 @@ mickey_key_setup(struct mickey_context *ctx)
 int
 mickey_set_key_and_iv(struct mickey_context *ctx, const uint8_t *key, const int keylen, const uint8_t iv[10], const int ivlen)
 {
+	mickey_init(ctx);
+
 	if((keylen > 0) && (keylen <= MICKEY))
 		
 		ctx->keylen = keylen;
@@ -178,14 +180,14 @@ mickey_set_key_and_iv(struct mickey_context *ctx, const uint8_t *key, const int 
 }
 
 /*
- * MICKEY 2.0 encrypt function 
+ * MICKEY 2.0 crypt function 
  * ctx - pointer on mickey_context  
  * buf - pointer on buffer data 
  * buflen - length the data buffer
  * out - pointer on output 
 */
 void
-mickey_encrypt(struct mickey_context *ctx, const uint8_t *buf, const uint32_t buflen, uint8_t *out)
+mickey_crypt(struct mickey_context *ctx, const uint8_t *buf, const uint32_t buflen, uint8_t *out)
 {
 	uint32_t i, j;
 	int keystream;
@@ -199,13 +201,6 @@ mickey_encrypt(struct mickey_context *ctx, const uint8_t *buf, const uint32_t bu
 			out[i] ^= keystream;
 		}
 	}
-}
-
-// MICKEY 2.0 decrypt function. See mickey_encrypt
-void
-mickey_decrypt(struct mickey_context *ctx, const uint8_t *buf, const uint32_t buflen, uint8_t *out)
-{
-	mickey_encrypt(ctx, buf, buflen, out);
 }
 
 // Test vectors print

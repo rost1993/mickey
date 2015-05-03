@@ -21,16 +21,12 @@ main(void)
 	
 	struct mickey_context ctx;
 
-	mickey_init(&ctx);
-
 	if(mickey_set_key_and_iv(&ctx, key1, 10, iv1, 10)) {
 		printf("Filling error mickey context!\n");
 		exit(1);
 	}
 	
 	mickey_test_vectors(&ctx);
-
-	mickey_init(&ctx);
 
 	if(mickey_set_key_and_iv(&ctx, key2, 10, iv2, 10)) {
 		printf("Filling error mickey context!\n");
